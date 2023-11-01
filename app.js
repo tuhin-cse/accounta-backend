@@ -1,13 +1,12 @@
-import dotenv from 'dotenv'
-dotenv.config({path: process.env.NODE_ENV === 'production' ? './.env.production' : './.env'} )
-
+import dotenv from "dotenv"
+dotenv.config()
 import compression from 'compression'
 import helmet from 'helmet'
 import cors from 'cors'
-
 import express from 'express';
 import mongoose from 'mongoose';
 import apiRoutes from "./routes/api.js";
+import {decodeToken} from "./middlewares/auth.middleware.js";
 
 
 mongoose.connect(process.env.DATABASE_URL).then(() => {
@@ -38,7 +37,7 @@ app.use(function (req, res, next) {
     next()
 });
 app.use(cors())
-
+app.use(decodeToken)
 
 app.use('/api', apiRoutes)
 

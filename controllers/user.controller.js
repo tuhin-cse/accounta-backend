@@ -1,34 +1,51 @@
+import dotenv from "dotenv"
+dotenv.config()
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import Currency from "../models/currency.model.js";
 import Account from "../models/account.model.js";
 import jwt from "jsonwebtoken";
+import {generateUid} from "../utils/uid.js";
 
-let secret = process.env.SECRET_KEY
+let secret = process.env.SECRET
 
 export const userRegister = async (req, res) => {
     try {
         const {body} = req;
+        let find = await User?.findOne({email: body.email})
+        if (find) {
+            return res.status(409).send({
+                error: true,
+                msg: "Email already exists."
+            })
+        }
+        let uid = await generateUid('U-', User)
         let user = await User.create({
-            ...body,
+            uid,
+            name: body.name,
+            email: body.email,
             password: bcrypt.hashSync(body.password, 10),
         })
+        let cid = await generateUid('C-', Currency)
+        let aid = await generateUid('A-', Account)
         let currency = await Currency.create({
-            user: user._id,
-            currency: 'US Dollar',
+            uid: cid,
+            user: user?._id,
+            name: 'US Dollar',
             code: 'USD',
             symbol: '$',
             rate: 1,
         })
         await Account.create({
-            user: user._id,
+            uid: aid,
+            user: user?._id,
             name: 'Cash',
             number: '001',
             currency: currency._id,
             balance: 0,
             type: 'cash',
         })
-        let token = jwt.sign({_id: user._id}, secret, {expiresIn: '1d'})
+        let token = jwt.sign({_id: user?._id}, secret, {expiresIn: '1d'})
         return res.status(200).send({
             error: false,
             msg: "User registered successfully.",
@@ -37,6 +54,7 @@ export const userRegister = async (req, res) => {
             }
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send({
             error: true,
             msg: "Something went wrong."
@@ -63,6 +81,24 @@ export const userLogin = async (req, res) => {
             data: {
                 token,
             }
+        })
+    } catch (e) {
+        return res.status(500).send({
+            error: true,
+            msg: "Something went wrong."
+        })
+    }
+}
+
+
+export const getUser = async (req, res) => {
+    try {
+        let {user} = res.locals
+        let data = await User.findById(user?._id).select('-password')
+        return res.status(200).send({
+            error: false,
+            msg: "User data fetched successfully.",
+            data
         })
     } catch (e) {
         return res.status(500).send({

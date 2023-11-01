@@ -1,22 +1,18 @@
-import Account from "../models/account.model.js";
+import Currency from "../models/currency.model.js";
 
-export const getAccounts = async (req, res) => {
+export const getCurrencies = async (req, res) => {
     try {
         let {query} = req
         let {user} = res.locals
         let filter = {user: user?._id}
-        let data = await Account.paginate(filter, {
+        let data = await Currency.paginate(filter, {
             page: query.page || 1,
             limit: query.limit || 10,
             sort: {createdAt: -1},
-            populate: {
-                path: 'currency',
-                select: 'name symbol'
-            }
         })
         return res.status(200).send({
             error: false,
-            msg: "Accounts fetched successfully.",
+            msg: "Currencies fetched successfully.",
             data
         })
     } catch (e) {
@@ -27,14 +23,14 @@ export const getAccounts = async (req, res) => {
     }
 }
 
-export const getAccount = async (req, res) => {
+export const getCurrency = async (req, res) => {
     try {
         let {user} = res.locals
         let {uid} = req.params
-        let data = await Account.findOne({user: user?._id, uid})
+        let data = await Currency.findOne({user: user?._id, uid})
         return res.status(200).send({
             error: false,
-            msg: "Account fetched successfully.",
+            msg: "Currency fetched successfully.",
             data
         })
     } catch (e) {
@@ -45,16 +41,15 @@ export const getAccount = async (req, res) => {
     }
 }
 
-
-export const postAccount = async (req, res) => {
+export const postCurrency = async (req, res) => {
     try {
         let {user} = res.locals
         let {body} = req
-        let account = await Account.create({...body, user: user?._id})
+        let currency = await Currency.create({...body, user: user?._id})
         return res.status(200).send({
             error: false,
-            msg: "Account created successfully.",
-            data: account
+            msg: "Currency created successfully.",
+            data: currency
         })
     } catch (e) {
         return res.status(500).send({
@@ -64,16 +59,16 @@ export const postAccount = async (req, res) => {
     }
 }
 
-export const patchAccount = async (req, res) => {
+export const patchCurrency = async (req, res) => {
     try {
         let {user} = res.locals
         let {body} = req
         let {uid} = req.params
-        let account = await Account.findOneAndUpdate({user: user?._id, uid}, {...body})
+        let currency = await Currency.findOneAndUpdate({user: user?._id, uid}, body, {new: true})
         return res.status(200).send({
             error: false,
-            msg: "Account updated successfully.",
-            data: account
+            msg: "Currency updated successfully.",
+            data: currency
         })
     } catch (e) {
         return res.status(500).send({
@@ -84,14 +79,15 @@ export const patchAccount = async (req, res) => {
 }
 
 
-export const delAccount = async (req, res) => {
+export const delCurrency = async (req, res) => {
     try {
         let {user} = res.locals
         let {uid} = req.params
-        await Account.findOneAndDelete({user: user?._id, uid})
+        let currency = await Currency.findOneAndDelete({user: user?._id, uid})
         return res.status(200).send({
             error: false,
-            msg: "Account deleted successfully.",
+            msg: "Currency deleted successfully.",
+            data: currency
         })
     } catch (e) {
         return res.status(500).send({
