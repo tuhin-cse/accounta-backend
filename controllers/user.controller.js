@@ -44,6 +44,7 @@ export const userRegister = async (req, res) => {
             currency: currency._id,
             balance: 0,
             type: 'cash',
+            default: true,
         })
         let token = jwt.sign({_id: user?._id}, secret, {expiresIn: '1d'})
         return res.status(200).send({

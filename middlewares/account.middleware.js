@@ -10,6 +10,8 @@ export const postAccountValidator = validate([
     body('number', "Number is required.").exists().notEmpty().withMessage("Number must not be empty."),
     body('initial_balance', "Initial balance is required.").exists().notEmpty().withMessage("Initial balance must not be empty.")
         .isNumeric().withMessage("Initial balance must be a number."),
+    body('default', "Default is required.").exists().notEmpty().withMessage("Default must not be empty.")
+        .isBoolean().withMessage("Default must be a boolean."),
 ])
 
 
@@ -22,4 +24,6 @@ export const patchAccountValidator = validate([
     body('number').optional().notEmpty().withMessage("Number must not be empty."),
     body('initial_balance').optional().notEmpty().withMessage("Initial balance must not be empty.")
         .isNumeric().withMessage("Initial balance must be a number."),
+    body('default').optional().notEmpty().withMessage("Default must not be empty.")
+        .isBoolean().withMessage("Default must be a boolean."),
 ])

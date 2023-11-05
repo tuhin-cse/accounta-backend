@@ -14,16 +14,20 @@ const schema = new Schema({
         required: true,
     },
     name: String,
-    code: String,
-    symbol: String,
-    rate: {
-        type: Number,
-        default: 1
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: 'category'
+    },
+    description: String,
+    price: Number,
+    cost: Number,
+    type: {
+        type: String,
+        enum: ['product', 'service']
     }
 })
 
 schema.plugin(paginate)
 
-
-const Currency = model('currency', schema);
-export default Currency;
+const Product = model('product', schema);
+export default Product;

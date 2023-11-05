@@ -28,6 +28,10 @@ const schema = new Schema({
         name: String,
         branch: String,
         address: String,
+    },
+    default: {
+        type: Boolean,
+        default: false,
     }
 })
 

@@ -1,19 +1,23 @@
-import Currency from "../models/currency.model.js";
 import {generateUid} from "../utils/uid.js";
+import Product from "../models/product.model.js";
 
-export const getCurrencies = async (req, res) => {
+export const getProducts = async (req, res) => {
     try {
         let {query} = req
         let {user} = res.locals
         let filter = {user: user?._id}
-        let data = await Currency.paginate(filter, {
+        let data = await Product.paginate(filter, {
             page: query.page || 1,
             limit: query.limit || 10,
             sort: {createdAt: -1},
+            populate: {
+                path: 'category',
+                select: 'name'
+            }
         })
         return res.status(200).send({
             error: false,
-            msg: "Currencies fetched successfully",
+            msg: "Products fetched successfully.",
             data
         })
     } catch (e) {
@@ -24,14 +28,14 @@ export const getCurrencies = async (req, res) => {
     }
 }
 
-export const getCurrency = async (req, res) => {
+export const getProduct = async (req, res) => {
     try {
         let {user} = res.locals
         let {uid} = req.params
-        let data = await Currency.findOne({user: user?._id, uid})
+        let data = await Product.findOne({user: user?._id, uid})
         return res.status(200).send({
             error: false,
-            msg: "Currency fetched successfully",
+            msg: "Product fetched successfully.",
             data
         })
     } catch (e) {
@@ -42,18 +46,19 @@ export const getCurrency = async (req, res) => {
     }
 }
 
-export const postCurrency = async (req, res) => {
+
+
+export const postProduct = async (req, res) => {
     try {
         let {user} = res.locals
         let {body} = req
-        let uid = await generateUid('C-', Currency)
-        await Currency.create({...body, uid, user: user?._id})
+        let uid = await generateUid('P-', Product)
+        await Product.create({...body, user: user?._id, uid})
         return res.status(200).send({
             error: false,
-            msg: "Currency created successfully",
+            msg: "Product created successfully",
         })
     } catch (e) {
-        console.log(e)
         return res.status(500).send({
             error: true,
             msg: "Something went wrong"
@@ -61,49 +66,38 @@ export const postCurrency = async (req, res) => {
     }
 }
 
-export const patchCurrency = async (req, res) => {
+export const patchProduct = async (req, res) => {
     try {
         let {user} = res.locals
         let {body} = req
         let {uid} = req.params
-        let currency = await Currency.findOne({user: user?._id, uid})
-        if (!currency) {
-            return res.status(404).send({
-                error: true,
-                msg: "Currency not found"
-            })
-        }
-        !!body.name && (currency.name = body.name)
-        !!body.code && (currency.code = body.code)
-        !!body.symbol && (currency.symbol = body.symbol)
-        !!body.rate && (currency.rate = body.rate)
-        await currency.save()
+        await Product.findOneAndUpdate({user: user?._id, uid}, body)
         return res.status(200).send({
             error: false,
-            msg: "Currency updated successfully",
+            msg: "Product updated successfully",
         })
     } catch (e) {
         return res.status(500).send({
             error: true,
-            msg: "Something went wrong."
+            msg: "Something went wrong"
         })
     }
 }
 
 
-export const delCurrency = async (req, res) => {
+export const delProduct = async (req, res) => {
     try {
         let {user} = res.locals
         let {uid} = req.params
-        await Currency.findOneAndDelete({user: user?._id, uid})
+        await Product.findOneAndDelete({user: user?._id, uid})
         return res.status(200).send({
             error: false,
-            msg: "Currency deleted successfully.",
+            msg: "Product deleted successfully",
         })
     } catch (e) {
         return res.status(500).send({
             error: true,
-            msg: "Something went wrong."
+            msg: "Something went wrong"
         })
     }
 }
