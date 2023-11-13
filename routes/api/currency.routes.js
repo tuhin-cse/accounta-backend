@@ -1,5 +1,4 @@
 import {Router} from "express";
-import {isUser} from "../../middlewares/auth.middleware.js";
 import {
     delCurrency,
     getCurrencies,
@@ -11,11 +10,11 @@ import {patchCurrencyValidator, postCurrencyValidator} from "../../middlewares/c
 
 const currencyRoutes = Router();
 
-currencyRoutes.get('/list', isUser, getCurrencies)
-currencyRoutes.get('/:uid', isUser, getCurrency)
-currencyRoutes.post('/', isUser, postCurrencyValidator, postCurrency)
-currencyRoutes.patch('/:uid', isUser, patchCurrencyValidator, patchCurrency)
-currencyRoutes.delete('/:uid', isUser, delCurrency)
+currencyRoutes.get('/list', getCurrencies)
+currencyRoutes.get('/:uid', getCurrency)
+currencyRoutes.post('/', postCurrencyValidator, postCurrency)
+currencyRoutes.patch('/:uid', patchCurrencyValidator, patchCurrency)
+currencyRoutes.delete('/:uid', delCurrency)
 
 
 export default currencyRoutes;

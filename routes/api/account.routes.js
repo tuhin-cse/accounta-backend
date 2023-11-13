@@ -1,5 +1,4 @@
 import {Router} from "express";
-import {isUser} from "../../middlewares/auth.middleware.js";
 import {
     delAccount,
     getAccount,
@@ -12,11 +11,11 @@ import {patchAccountValidator, postAccountValidator} from "../../middlewares/acc
 
 const accountRoutes = Router();
 
-accountRoutes.get('/list', isUser, getAccounts)
-accountRoutes.get('/elements', isUser, getAccountElements)
-accountRoutes.get('/:uid', isUser, getAccount)
-accountRoutes.post('/', isUser, postAccountValidator, postAccount)
-accountRoutes.patch('/:uid', isUser, patchAccountValidator, patchAccount)
-accountRoutes.delete('/:uid', isUser, delAccount)
+accountRoutes.get('/list', getAccounts)
+accountRoutes.get('/elements', getAccountElements)
+accountRoutes.get('/:uid', getAccount)
+accountRoutes.post('/', postAccountValidator, postAccount)
+accountRoutes.patch('/:uid', patchAccountValidator, patchAccount)
+accountRoutes.delete('/:uid', delAccount)
 
 export default accountRoutes;

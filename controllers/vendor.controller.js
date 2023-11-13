@@ -1,19 +1,20 @@
 import {generateUid} from "../utils/uid.js";
 import Customer from "../models/customer.model.js";
+import Vendor from "../models/vendor.model.js";
 
-export const getCustomers = async (req, res) => {
+export const getVendors = async (req, res) => {
     try {
         let {query} = req
         let {user} = res.locals
         let filter = {user: user?._id}
-        let data = await Customer.paginate(filter, {
+        let data = await Vendor.paginate(filter, {
             page: query.page || 1,
             limit: query.limit || 10,
             sort: {createdAt: -1},
         })
         return res.status(200).send({
             error: false,
-            msg: "Customers fetched successfully",
+            msg: "Vendors fetched successfully",
             data
         })
     } catch (e) {
@@ -24,14 +25,14 @@ export const getCustomers = async (req, res) => {
     }
 }
 
-export const getCustomer = async (req, res) => {
+export const getVendor = async (req, res) => {
     try {
         let {user} = res.locals
         let {uid} = req.params
-        let data = await Customer.findOne({user: user?._id, uid})
+        let data = await Vendor.findOne({user: user?._id, uid})
         return res.status(200).send({
             error: false,
-            msg: "Customer fetched successfully",
+            msg: "Vendor fetched successfully",
             data
         })
     } catch (e) {
@@ -42,15 +43,15 @@ export const getCustomer = async (req, res) => {
     }
 }
 
-export const postCustomer = async (req, res) => {
+export const postVendor = async (req, res) => {
     try {
         let {user} = res.locals
         let {body} = req
-        let uid = await generateUid('CU-', Customer)
-        await Customer.create({...body, uid, user: user?._id})
+        let uid = await generateUid('V-', Customer)
+        await Vendor.create({...body, uid, user: user?._id})
         return res.status(200).send({
             error: false,
-            msg: "Customer created successfully",
+            msg: "Vendor created successfully",
         })
     } catch (e) {
         console.log(e)
@@ -61,26 +62,27 @@ export const postCustomer = async (req, res) => {
     }
 }
 
-export const patchCustomer = async (req, res) => {
+export const patchVendor = async (req, res) => {
     try {
         let {user} = res.locals
         let {body} = req
         let {uid} = req.params
-        let customer = await Customer.findOne({user: user?._id, uid})
-        if (!customer) {
+        let vendor = await Vendor.findOne({user: user?._id, uid})
+        if (!vendor) {
             return res.status(404).send({
                 error: true,
-                msg: "Customer not found"
+                msg: "Vendor not found"
             })
         }
-        !!body.name && (customer.name = body.name)
-        !!body.email && (customer.email = body.email)
-        !!body.phone && (customer.phone = body.phone)
-        !!body.address && (customer.rate = body.address)
-        await customer.save()
+        !!body.name && (Vendor.name = body.name)
+        !!body.email && (Vendor.email = body.email)
+        !!body.phone && (Vendor.phone = body.phone)
+        !!body.address && (Vendor.rate = body.address)
+        !!body.business && (vendor.business = body.business)
+        await Vendor.save()
         return res.status(200).send({
             error: false,
-            msg: "Customer updated successfully",
+            msg: "Vendor updated successfully",
         })
     } catch (e) {
         return res.status(500).send({
@@ -91,14 +93,14 @@ export const patchCustomer = async (req, res) => {
 }
 
 
-export const delCustomer = async (req, res) => {
+export const delVendor = async (req, res) => {
     try {
         let {user} = res.locals
         let {uid} = req.params
-        await Customer.findOneAndDelete({user: user?._id, uid})
+        await Vendor.findOneAndDelete({user: user?._id, uid})
         return res.status(200).send({
             error: false,
-            msg: "Customer deleted successfully.",
+            msg: "Vendor deleted successfully.",
         })
     } catch (e) {
         return res.status(500).send({
