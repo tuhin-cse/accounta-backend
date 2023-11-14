@@ -84,6 +84,7 @@ export const userLogin = async (req, res) => {
             }
         })
     } catch (e) {
+        console.log(e)
         return res.status(500).send({
             error: true,
             msg: "Something went wrong."

@@ -1,6 +1,7 @@
-import {model} from "mongoose";
+import {model, Schema} from "mongoose";
+import {paginate} from "../utils/mongoose.js";
 
-const Schema = new Schema({
+const schema = new Schema({
     uid: {
         type: String,
         unique: true,
@@ -12,10 +13,10 @@ const Schema = new Schema({
         ref: 'user',
         required: true,
     },
-    date: String,
-    vendor: {
+    date: Date,
+    customer: {
         type: Schema.Types.ObjectId,
-        ref: 'vendor',
+        ref: 'customer',
     },
     products: [{
         product: {
@@ -24,10 +25,17 @@ const Schema = new Schema({
         },
         quantity: Number,
         price: Number,
+        subtotal: Number,
     }],
+    subtotal: Number,
+    vat: Number,
+    total_vat: Number,
+    discount: Number,
     total: Number,
     paid: Number,
 }, {timestamps: true})
 
-const Sale = model('sale', Schema);
+schema.plugin(paginate)
+
+const Sale = model('sale', schema);
 export default Sale;

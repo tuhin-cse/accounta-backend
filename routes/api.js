@@ -7,6 +7,8 @@ import productRoutes from "./api/product.routes.js";
 import customerRoutes from "./api/customer.routes.js";
 import {isUser} from "../middlewares/auth.middleware.js";
 import vendorRoutes from "./api/vendor.routes.js";
+import saleRoutes from "./api/sale.routes.js";
+import purchaseRoutes from "./api/purchase.routes.js";
 
 const apiRoutes = Router()
 
@@ -16,6 +18,8 @@ apiRoutes.use('/category', isUser, categoryRoutes);
 apiRoutes.use('/currency', isUser, currencyRoutes);
 apiRoutes.use('/customer', isUser, customerRoutes);
 apiRoutes.use('/product', isUser, productRoutes);
+apiRoutes.use('/purchase', isUser, purchaseRoutes);
+apiRoutes.use('/sale', isUser, saleRoutes);
 apiRoutes.use('/vendor', isUser, vendorRoutes);
 
 apiRoutes.use("/user", userRoutes);
