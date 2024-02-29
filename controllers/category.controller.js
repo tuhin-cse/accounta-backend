@@ -1,6 +1,7 @@
 import {generateUid} from "../utils/uid.js";
 import Category from "../models/category.model.js";
 import mongoose from "mongoose";
+import OpenAI from "openai";
 
 export const getCategories = async (req, res) => {
     try {
@@ -90,6 +91,61 @@ export const postCategory = async (req, res) => {
         })
     } catch (e) {
         console.log(e)
+        return res.status(500).send({
+            error: true,
+            msg: "Something went wrong"
+        })
+    }
+}
+
+
+const parseJson = (json) => {
+    try {
+        return JSON.parse(json)
+    } catch (e) {
+        return {}
+    }
+}
+
+
+export const postCategoryGenerate = async (req, res) => {
+    try {
+        let {body} = req
+        let {user} = res.locals
+
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+
+        const chatCompletion = await openai.chat.completions.create({
+            messages: [{ role: 'user', content: `Write a json that contains all the category and subcategory of ${body.type}. The response should an object only which keys are category name and value should be an array of subcategory name.` }],
+            model: 'gpt-3.5-turbo',
+        });
+
+        let response = parseJson(chatCompletion.choices[0].message.content)
+
+        for (let key of Object.keys(response)) {
+            let uid = await generateUid('C-', Category)
+            let category = await Category.create({
+                name: key,
+                uid, user:
+                user?._id
+            })
+            for (let value of response[key]) {
+                await Category.create({
+                    name: value,
+                    uid: await generateUid('C-', Category),
+                    user: user?._id, parent: category._id
+                })
+            }
+        }
+        return res.status(200).send({
+            error: false,
+            msg: "Category generated successfully",
+        })
+
+
+    } catch (e) {
         return res.status(500).send({
             error: true,
             msg: "Something went wrong"

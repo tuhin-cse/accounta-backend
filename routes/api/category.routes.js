@@ -5,7 +5,7 @@ import {
     getCategory,
     getCategoryElements,
     patchCategory,
-    postCategory
+    postCategory, postCategoryGenerate
 } from "../../controllers/category.controller.js";
 import {patchCategoryValidator, postCategoryValidator} from "../../middlewares/category.middleware.js";
 
@@ -14,6 +14,7 @@ categoryRoutes.get('/list', getCategories)
 categoryRoutes.get('/elements', getCategoryElements)
 categoryRoutes.get('/:uid', getCategory)
 categoryRoutes.post('/', postCategoryValidator, postCategory)
+categoryRoutes.post('/generate', postCategoryGenerate)
 categoryRoutes.patch('/:uid', patchCategoryValidator, patchCategory)
 categoryRoutes.delete('/:uid', delCategory)
 

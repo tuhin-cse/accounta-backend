@@ -18,7 +18,7 @@ const schema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'category'
     }
-})
+}, {timestamps: true})
 
 schema.plugin(paginate)
 
